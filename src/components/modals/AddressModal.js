@@ -22,6 +22,9 @@ import type { FioAddress, FlatListItem } from '../../types/types.js'
 import { KeyboardTracker } from '../common/KeyboardTracker.js'
 import ResolutionError, { ResolutionErrorCode } from '../common/ResolutionError.js'
 import { type AirshipBridge, AirshipModal, dayText, IconCircle } from './modalParts.js'
+import Resolver from '@rsksmart/rns-resolver.js'
+
+const resolver = new Resolver.forRskMainnet()
 
 const MODAL_ICON = 'address-book-o'
 const inputAccessoryViewID: string = 'inputAccessoryViewID'
@@ -161,7 +164,7 @@ class AddressModalConnected extends React.Component<Props, State> {
   }
 
   checkIfDomain = (domain: string): boolean => {
-    return this.checkIfUnstoppableDomain(domain) || this.checkIfEnsDomain(domain)
+    return this.checkIfUnstoppableDomain(domain) || this.checkIfEnsDomain(domain) || this.checkIfRnsDomain(domain)
   }
 
   checkIfUnstoppableDomain = (domain: string): boolean => {
@@ -172,11 +175,62 @@ class AddressModalConnected extends React.Component<Props, State> {
     return domain.endsWith('.eth') || domain.endsWith('.luxe') || domain.endsWith('.kred') || domain.endsWith('.xyz')
   }
 
+  checkIfRnsDomain = (domain: string): boolean => {
+    return domain.endsWith('.rsk')
+  }
+
+  // This approach considers resolution for tokens
+  getRnsChainIdFromPluginId = (pluginId: string): number => {
+    switch (pluginId) {
+      case 'rsk':
+        return 137
+      case 'ethereum':
+        return 60
+      case 'ethereumclassic':
+        return 61
+      case 'bitcoin':
+        return 0
+      case 'litecoin':
+        return 2
+      case 'dogecoin':
+        return 3
+      case 'dash':
+        return 5
+      case 'ripple':
+        return 144
+      case 'bitcoincash':
+        return 145
+      case 'binance':
+        return 714
+      case 'stellar':
+        return 148
+      case 'eos':
+        return 194
+      default:
+        return null
+    }
+  }
+
   fetchDomain = async (domain: string, currencyTicker: string): Promise<string> => {
     domain = domain.trim().toLowerCase()
     if (!this.checkIfDomain(domain)) {
       throw new ResolutionError(ResolutionErrorCode.UnsupportedDomain, { domain })
     }
+
+    if (this.checkIfRnsDomain(domain)) {
+      const chainId = this.getRnsChainIdFromPluginId(this.props.coreWallet.currencyInfo.pluginId)
+      if (chainId == null) {
+        throw new ResolutionError(ResolutionErrorCode.UnspecifiedCurrency, { domain, currencyTicker })
+      }
+
+      try {
+        const response = await resolver.addr(domain, chainId)
+        return response
+      } catch (e) {
+        throw new ResolutionError(ResolutionErrorCode.UnregisteredDomain, { domain })
+      }
+    }
+
     const baseurl = `https://unstoppabledomains.com/api/v1`
     const url = this.checkIfEnsDomain(domain) ? `${baseurl}/${domain}/${currencyTicker}` : `${baseurl}/${domain}`
     const response = await global.fetch(url).then(res => res.json())

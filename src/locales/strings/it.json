@@ -668,7 +668,7 @@
   "fio_address_to_transfer": "Indirizzo da trasferire",
   "fio_domain_to_transfer": "Dominio da trasferire",
   "fio_domain_transferred": "Trasferimento riuscito",
-  "scan_address_modal_title": "Inserisci indirizzo FIO, ENS o indirizzo pubblico del destinatario",
+  "scan_address_modal_title": "Inserisci indirizzo FIO, ENS, RNS o indirizzo pubblico del destinatario",
   "address_modal_default_header": "Inserisci indirizzo",
   "open_url_err": "Impossibile aprire questa url - %s",
   "resolving": "Risoluzione...",
