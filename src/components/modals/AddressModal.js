@@ -140,9 +140,6 @@ class AddressModalConnected extends React.Component<Props, State> {
 
   clearText = () => {
     this.setState({ uri: '' })
-    if (this.textInput.current) {
-      this.textInput.current.blur()
-    }
   }
 
   fieldOnFocus = () => {
