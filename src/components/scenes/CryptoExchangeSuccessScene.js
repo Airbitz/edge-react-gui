@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import { EXCHANGE_SCENE } from '../../constants/SceneKeys.js'
 import s from '../../locales/strings.js'
 import type { RootState } from '../../reducers/RootReducer'
+import { PLATFORM } from '../../theme/variables/platform'
 import { needToShowConfetti } from '../../util/show-confetti'
 import { SceneWrapper } from '../common/SceneWrapper.js'
 import { type Theme, type ThemeProps, cacheStyles, withTheme } from '../services/ThemeContext.js'
@@ -29,10 +30,15 @@ type LocalState = {
 
 type Props = StateProps & ThemeProps
 
-const confettiProps = {
-  count: 250,
-  origin: { x: -50, y: -50 },
-  fallSpeed: 4000
+const confettiLeftProps = {
+  explosionSpeed: 500,
+  count: 100,
+  origin: { x: -50, y: 100 },
+  fallSpeed: 6500
+}
+
+const confettiRightProps = {
+  origin: { x: PLATFORM.deviceWidth + 50, y: 100 }
 }
 
 class CryptoExchangeSuccessComponent extends React.PureComponent<Props, LocalState> {
@@ -58,15 +64,20 @@ class CryptoExchangeSuccessComponent extends React.PureComponent<Props, LocalSta
       this.setState({ showConfetti: true })
       setTimeout(() => {
         this.setState({ showButton: true })
-      }, 4500)
+      }, 6500)
     } else {
       this.setState({ showButton: true })
     }
   }
 
   renderConfetti() {
-    if (!this.state.showConfetti) return null
-    return <ConfettiCannon {...confettiProps} />
+    // if (!this.state.showConfetti) return null
+    return (
+      <>
+        <ConfettiCannon {...confettiLeftProps} />
+        <ConfettiCannon {...{ ...confettiLeftProps, ...confettiRightProps }} />
+      </>
+    )
   }
 
   render() {
