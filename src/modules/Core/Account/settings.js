@@ -212,6 +212,9 @@ export const SYNCED_ACCOUNT_DEFAULTS = {
   RIF: {
     denomination: '1000000000000000000'
   },
+  DOC: {
+    denomination: '1000000000000000000'
+  },
   CREP: {
     denomination: '100000000'
   },
@@ -472,6 +475,7 @@ export const SYNCED_ACCOUNT_TYPES = {
   SAI: 'object',
   RBTC: 'object',
   RIF: 'object',
+  DOC: 'object',
   CREP: 'object',
   CUSDC: 'object',
   CBAT: 'object',
