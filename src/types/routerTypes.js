@@ -1,6 +1,6 @@
 // @flow
 
-import { type EdgeCurrencyWallet } from 'edge-core-js'
+import { type EdgeCurrencyWallet, type OtpError } from 'edge-core-js'
 import * as Flux from 'react-native-router-flux'
 
 /**
@@ -56,7 +56,9 @@ export type ParamList = {
   fioSentRequestDetails: {}, // TODO
   manageTokens: {}, // TODO
   notificationSettings: void,
-  otpRepair: {}, // TODO
+  otpRepair: {|
+    otpError: OtpError
+  |},
   otpSetup: void,
   passwordRecovery: void,
   pluginBuy: void,
